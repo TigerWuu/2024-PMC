@@ -34,6 +34,6 @@ rlocus(sys_est_L);
 zgrid;
 
 %% closed-loop : PD controller
-kd = 10;
+kd = 5.5;
 sys_est_cls_PD = feedback(sys_est_L*kd, 1);
 lsim(sys_est_cls_PD, r, t);
