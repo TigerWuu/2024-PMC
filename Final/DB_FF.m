@@ -13,7 +13,7 @@ load("sys_est.mat");
 % You can decide the true amplitude on LabView code (default 1 [deg])
 Duration = 2;	% second
 f = 400;		% Hz
-padding = 0.1;	% second, front and back
+padding = 0;	% second, front and back
 
 t = (0:Ts:Duration)';
 tri = sawtooth(2*pi*f*t + pi/2 + pi/50, 0.5);
@@ -21,8 +21,8 @@ t = (0:Ts:(Duration + padding*2))';
 r = [zeros(fs*padding, 1); tri; zeros(fs*padding, 1)];
 
 % Write reference to .csv file
-% filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
-% writematrix(filename, r);
+filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
+writematrix(r, filename);
 
 %% ---------------------------------------- Step 3 ------------------------------------
 % Creat the Q Filter here
@@ -33,6 +33,9 @@ z = tf('z',Ts);
 Q1 = (z^(-1)+2+z)/4;
 Q2 = (z^(-1)+4+z)/6;
 Q = Q1;
+
+% filename = sprintf('Q121.dat');
+% tf2host(Q, filename);
 
 %% ---------------------------------------- Step 4 ------------------------------------
 % Load the L Filter here
