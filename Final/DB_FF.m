@@ -13,7 +13,7 @@ load("sys_est.mat");
 % You can decide the true amplitude on LabView code (default 1 [deg])
 Duration = 2;	% second
 f = 400;		% Hz
-padding = 0;	% second, front and back
+padding = 1;	% second, front and back
 
 t = (0:Ts:Duration)';
 tri = sawtooth(2*pi*f*t + pi/2 + pi/50, 0.5);
@@ -21,8 +21,8 @@ t = (0:Ts:(Duration + padding*2))';
 r = [zeros(fs*padding, 1); tri; zeros(fs*padding, 1)];
 
 % Write reference to .csv file
-filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
-writematrix(r, filename);
+% filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
+% writematrix(r, filename);
 
 %% ---------------------------------------- Step 3 ------------------------------------
 % Creat the Q Filter here
@@ -45,6 +45,7 @@ load("F.mat");
 
 [numQ, denQ] = tfdata(Q, 'v');
 [numF, denF] = tfdata(F, 'v');
+[numG, denG] = tfdata(sys_est, 'v');
 % Save vector L
 % writematrix(numL, "ILC-numL.csv");
 % Record delayQ by yourselves
@@ -52,6 +53,9 @@ load("F.mat");
 %% ---------------------------------------- Step 5 ------------------------------------
 % Simulate tracking results, analyze, and plot some stuff
 % u = lsim(F, r, t);
+% SimDelay = 48;
+% u = filter(numF, denF, r);
+% y = filter(numG, denG, [u(SimDelay:end)' zeros(1,SimDelay-1)]);
 u = conv(r, numF/sum(numF), 'same');
 y = lsim(sys_est, u, t);
 plot(t, r, t, y);

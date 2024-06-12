@@ -5,7 +5,7 @@ clc; clear; close all;
 Fs = 2e4; Ts = 1/Fs;
 amp = 1;
 
-SimBandwidth = 4000;		% passband-edge frequency
+SimBandwidth = 2000;		% passband-edge frequency
 SimPadding = 100;
 
 N = 46;						% FIR filter order

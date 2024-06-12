@@ -13,7 +13,7 @@ load("sys_est.mat");
 % You can decide the true amplitude on LabView code (default 1 [deg])
 Duration = 2;	% second
 f = 400;		% Hz
-padding = 1;	% second, front and back
+padding = 0;	% second, front and back
 
 t = (0:Ts:Duration)';
 tri = sawtooth(2*pi*f*t + pi/2 + pi/50, 0.5);
@@ -21,8 +21,8 @@ t = (0:Ts:(Duration + padding*2))';
 r = [zeros(fs*padding, 1); tri; zeros(fs*padding, 1)];
 
 % Write reference to .csv file
-% filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
-% writematrix(filename, r);
+filename = sprintf('tri-%dHz-%ds-padding%.1fs.csv', f, Duration, padding);
+writematrix(r, filename);
 
 %% ---------------------------------------- Step 3 ------------------------------------
 % Creat the Q Filter here
@@ -34,37 +34,31 @@ Q1 = (z^(-1)+2+z)/4;
 Q2 = (z^(-1)+4+z)/6;
 Q = Q1;
 
+% filename = sprintf('Q121.dat');
+% tf2host(Q, filename);
+
 %% ---------------------------------------- Step 4 ------------------------------------
 % Load the L Filter here
-load("Cr.mat");
+% load("Cr.mat");
+% F = Cr;
 load("F.mat");
-L = F;
 
 [numQ, denQ] = tfdata(Q, 'v');
-[numL, denL] = tfdata(L, 'v');
+[numF, denF] = tfdata(F, 'v');
+[numG, denG] = tfdata(sys_est, 'v');
 % Save vector L
 % writematrix(numL, "ILC-numL.csv");
 % Record delayQ by yourselves
 
 %% ---------------------------------------- Step 5 ------------------------------------
 % Simulate tracking results, analyze, and plot some stuff
-iterations = 20;
-u0 = zeros(length(r),1);
-y = zeros(length(r),1);
-
-for i = 1:iterations
-    e = r-y;
-    % a = lsim(L, e, t);
-    % a = filter(numL, denL, e);
-    a = conv(e, numL/sum(numL), 'same');
-    u1 = u0 + a;
-
-    u1 = conv(u1, numQ/4, 'same');
-
-    y = lsim(sys_est, u1, t);
-    u0 = u1;
-    plot(t,r,t,y);
-    pause(0.1);
-end
+% u = lsim(F, r, t);
+SimDelay = 147;
+u = filter(numF, denF, r);
+% u = filter(numG, denG, [r(SimDelay:end)' zeros(1,SimDelay-1)]);
+% u = conv(r, numF/sum(numF), 'same');
+y = filter(numG, denG, [u(SimDelay:end)' zeros(1,SimDelay-1)]);
+% y = lsim(sys_est, u, t);
+plot(t, r, t, y);
 
 

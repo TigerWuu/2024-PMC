@@ -13,7 +13,7 @@ load("sys_est.mat");
 % You can decide the true amplitude on LabView code (default 1 [deg])
 Duration = 2;	% second
 f = 400;		% Hz
-padding = 0;	% second, front and back
+padding = 1;	% second, front and back
 
 t = (0:Ts:Duration)';
 tri = sawtooth(2*pi*f*t + pi/2 + pi/50, 0.5);
@@ -36,7 +36,7 @@ z = tf('z',Ts);
 Q1 = (z^(-1)+2+z)/4;
 Q2 = (z^(-1)+4+z)/6;
 Q = Q1;
-sf = 0.02;
+sf = 0.05;
 
 
 % load("Cr.mat");
