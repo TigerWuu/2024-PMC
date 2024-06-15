@@ -5,7 +5,7 @@ clc; clear; close all;
 Fs = 2e4; Ts = 1/Fs;
 amp = 1;
 
-SimBandwidth = 2000;		% passband-edge frequency
+SimBandwidth = 400;		% passband-edge frequency
 SimPadding = 100;
 
 N = 46;						% FIR filter order
@@ -45,5 +45,5 @@ xlabel('Time [s]'); ylabel('Acc [mm/s^2]');
 grid on;
 
 %% Write the reference impulse to "ref_imp.csv"
-filename = sprintf('imp-order%d-padding%d-%dHz.csv', N, SimPadding, SimBandwidth);
-csvwrite(filename, r);
+% filename = sprintf('imp-order%d-padding%d-%dHz.csv', N, SimPadding, SimBandwidth);
+% csvwrite(filename, r);

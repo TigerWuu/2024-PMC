@@ -39,9 +39,10 @@ Q = Q1;
 
 %% ---------------------------------------- Step 4 ------------------------------------
 % Load the L Filter here
-% load("Cr.mat");
-% F = Cr;
-load("F.mat");
+SimDelay = 48;
+load("Cr.mat");
+F = Cr*z^(-SimDelay);
+% load("F.mat");
 
 [numQ, denQ] = tfdata(Q, 'v');
 [numF, denF] = tfdata(F, 'v');
@@ -53,11 +54,12 @@ load("F.mat");
 %% ---------------------------------------- Step 5 ------------------------------------
 % Simulate tracking results, analyze, and plot some stuff
 % u = lsim(F, r, t);
-% SimDelay = 48;
-% u = filter(numF, denF, r);
-% y = filter(numG, denG, [u(SimDelay:end)' zeros(1,SimDelay-1)]);
-u = conv(r, numF/sum(numF), 'same');
-y = lsim(sys_est, u, t);
+
+u = filter(numF, denF, r);
+y = filter(numG, denG, [u(SimDelay:end)' zeros(1,SimDelay-1)]);
+% y = lsim(sys_est, [u(SimDelay:end)' zeros(1,SimDelay-1)], t);
+% u = conv(r, numF/sum(numF), 'same');
+% y = lsim(sys_est, u, t);
 plot(t, r, t, y);
 
 

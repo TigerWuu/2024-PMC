@@ -36,9 +36,10 @@ Q = Q1;
 
 %% ---------------------------------------- Step 4 ------------------------------------
 % Load the L Filter here
+SimDelay = 47;
 load("Cr.mat");
 load("F.mat");
-L = F;
+L = Cr*z^(-SimDelay);
 
 [numQ, denQ] = tfdata(Q, 'v');
 [numL, denL] = tfdata(L, 'v');
@@ -55,9 +56,10 @@ y = zeros(length(r),1);
 for i = 1:iterations
     e = r-y;
     % a = lsim(L, e, t);
-    % a = filter(numL, denL, e);
-    a = conv(e, numL/sum(numL), 'same');
-    u1 = u0 + a;
+    a = filter(numL, denL, e);
+    % a = conv(e, numL/sum(numL), 'same');
+    u1 = u0 + [a(SimDelay:end); zeros(SimDelay-1,1)];
+    % u1 = u0 + a;
 
     u1 = conv(u1, numQ/4, 'same');
 

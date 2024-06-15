@@ -36,20 +36,17 @@ z = tf('z',Ts);
 Q1 = (z^(-1)+2+z)/4;
 Q2 = (z^(-1)+4+z)/6;
 Q = Q1;
-sf = 0.05;
 
-
-% load("Cr.mat");
-% F = Cr;
-load("F.mat");
+load("Cr.mat");
+F = Cr;
+% load("F.mat");
 delay = 47;
 
 Np = fs/f;
 N1 = delay;
 N2 = 1;
-Cr = feedback(z^(-Np+N1+N2)*Q*z^(-N2),-z^(-N1))*F*z^(-N1);
-Cr_0 = Cr;
-Cr_sf = Cr*sf; % ??
+Cr_0 = feedback(z^(-Np+N1+N2)*Q*z^(-N2),-z^(-N1))*F*z^(-N1);
+
 %% ---------------------------------------- Step 4 ------------------------------------
 % Save the controller 
 % filename2 = sprintf('RC-ZPETC-%dHz-Q.dat', f);
@@ -63,17 +60,13 @@ tickfont = 18;
 legendfont = 16;
 
 sys_closed_RC = feedback(Cr_0*sys_est,1);
-sys_closed_RC_sf = feedback(Cr_sf*sys_est,1);
-
+ 
 y = lsim(sys_closed_RC, r, t);
-y_sf = lsim(sys_closed_RC_sf, r, t);
 error = r-y;
-error_sf = r-y_sf;
 
 figure();
 plot(t, r,'-','linewidth',1.5); hold on;
-% plot(t, y,'-.','linewidth',1.5);
-plot(t, y_sf,'-.','linewidth',1.5);
+plot(t, y,'-.','linewidth',1.5);
 
 xlabel('Times[s]','interpreter','latex','fontsize',tickfont);
 ylabel('Magnitude[m]','interpreter','latex','fontsize',tickfont);
@@ -82,8 +75,7 @@ legend("$r$","$y$","$y_{sf}$",'interpreter','latex','fontsize',legendfont,'locat
 grid on; grid minor;
 
 figure();
-% plot(t, error,'-','linewidth',1.5);
-plot(t, error_sf,'-','linewidth',1.5);hold on;
+plot(t, error,'-','linewidth',1.5);
 
 xlabel('Times[s]','interpreter','latex','fontsize',tickfont);
 ylabel('Magnitude[m]','interpreter','latex','fontsize',tickfont);
